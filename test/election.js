@@ -7,7 +7,7 @@ contract("Election", function(accounts) {
     return Election.deployed().then(function(instance) {
       return instance.candidatesCount();
     }).then(function(count) {
-      assert.equal(count, 2);
+      assert.equal(count, 4);
     });
   });
 
@@ -17,12 +17,22 @@ contract("Election", function(accounts) {
       return electionInstance.candidates(1);
     }).then(function(candidate) {
       assert.equal(candidate[0], 1, "contains the correct id");
-      assert.equal(candidate[1], "Candidate 1", "contains the correct name");
+      assert.equal(candidate[1], "Invincible", "contains the correct name");
       assert.equal(candidate[2], 0, "contains the correct votes count");
       return electionInstance.candidates(2);
     }).then(function(candidate) {
       assert.equal(candidate[0], 2, "contains the correct id");
-      assert.equal(candidate[1], "Candidate 2", "contains the correct name");
+      assert.equal(candidate[1], "Atom Eve", "contains the correct name");
+      assert.equal(candidate[2], 0, "contains the correct votes count");
+      return electionInstance.candidates(3);
+    }).then(function(candidate) {
+      assert.equal(candidate[0], 3, "contains the correct id");
+      assert.equal(candidate[1], "Allen the Alien", "contains the correct name");
+      assert.equal(candidate[2], 0, "contains the correct votes count");
+      return electionInstance.candidates(4);
+    }).then(function(candidate) {
+      assert.equal(candidate[0], 4, "contains the correct id");
+      assert.equal(candidate[1], "Omni-Man", "contains the correct name");
       assert.equal(candidate[2], 0, "contains the correct votes count");
     });
   });
@@ -64,11 +74,10 @@ contract("Election", function(accounts) {
   });
 
   it("throws an exception for double voting", function() {
-    return Election.deployed().then(function(instance) {
+    return Election.deployed().then(async function(instance) {
       electionInstance = instance;
       candidateId = 2;
-      electionInstance.vote(candidateId, { from: accounts[1] });
-      return electionInstance.candidates(candidateId);
+      await electionInstance.vote(candidateId, { from: accounts[1] });      return electionInstance.candidates(candidateId);
     }).then(function(candidate) {
       var voteCount = candidate[2];
       assert.equal(voteCount, 1, "accepts first vote");
